@@ -26,7 +26,7 @@ public class ScooterDaoImpl extends AbstractDao<Scooter> implements ScooterDao {
     @Override
     public List<Scooter> getScootersBySpot(Long spotId) {
         try {
-            log.info("try to take scooters by spot with id:"+spotId);
+            log.info("try to take scooters by spot with id:" + spotId);
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<Scooter> cr = cb.createQuery(Scooter.class);
             Root<Scooter> root = cr.from(Scooter.class);
@@ -34,9 +34,9 @@ public class ScooterDaoImpl extends AbstractDao<Scooter> implements ScooterDao {
 
             Query query = entityManager.createQuery(cr);
             return query.getResultList();
-        }catch (Exception e){
-            log.warn("can't take scooters by spot with id:"+spotId,e);
-            throw new DaoException("can't take scooters by spot with id:"+spotId,e);
+        } catch (Exception e) {
+            log.warn("can't take scooters by spot with id:" + spotId, e);
+            throw new DaoException("can't take scooters by spot with id:" + spotId, e);
         }
     }
 

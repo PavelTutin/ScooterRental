@@ -4,7 +4,6 @@ import by.tutin.api.dao.OrderDao;
 import by.tutin.api.dao.SpotDao;
 import by.tutin.api.dao.UserDao;
 import by.tutin.api.service.UserService;
-import by.tutin.exception.DaoException;
 import by.tutin.exception.ServiceException;
 import by.tutin.model.Order;
 import by.tutin.model.User;
@@ -47,239 +46,175 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void add(RegistrationRequestDto requestDto) {
-        try {
-            log.info("Service. try to add user from requestDto");
-            User user = userMapper.RegistrationRequestDtoToUser(requestDto);
-            user.setRole(Role.USER);
-            user.setStatus(UserStatus.ACTIVE);
-            String password = passwordEncoder.encode(user.getPassword());
-            user.setPassword(password);
+        log.info("try to add user from requestDto");
 
-            userDao.save(user);
-        } catch (DaoException e) {
-            log.warn("Service. can't add user from requestDto", e);
-            throw new ServiceException(e);
-        }
+        User user = userMapper.RegistrationRequestDtoToUser(requestDto);
+        user.setRole(Role.USER);
+        user.setStatus(UserStatus.ACTIVE);
+        String password = passwordEncoder.encode(user.getPassword());
+        user.setPassword(password);
 
+        userDao.save(user);
     }
 
     @Override
     public UserDto getById(Long id) {
-        try {
-            log.info("service. try to getById user with id " + id);
-            return userMapper.UserToUserDto(userDao.getById(id));
-        } catch (DaoException e) {
-            log.warn("service. can't getById user with id " + id, e);
-            throw new ServiceException(e);
-        }
+        log.info("try to getById user with id " + id);
+
+        return userMapper.UserToUserDto(userDao.getById(id));
     }
 
     @Override
     public List<UserDto> getAll() {
-        try {
-            log.info("service. try to getAll user");
-            return userMapper.UserToUserDto(userDao.getAll());
-        } catch (DaoException e) {
-            log.warn("service. can't getAll users", e);
-            throw new ServiceException(e);
-        }
+        log.info("try to getAll user");
+
+        return userMapper.UserToUserDto(userDao.getAll());
     }
 
     @Override
     public UserDto update(User user) {
-        try {
-            log.info("service. try to update the user with id " + user.getId());
-            return userMapper.UserToUserDto(userDao.update(user));
-        } catch (DaoException e) {
-            log.warn("service. can't update the user with id " + user.getId(), e);
-            throw new ServiceException(e);
-        }
+        log.info("try to update the user with id " + user.getId());
+
+        return userMapper.UserToUserDto(userDao.update(user));
     }
 
     @Override
     public void delete(Long id) {
-        try {
-            log.info("service. try to delete the user with id " + id);
-            User user = userDao.getById(id);
+        log.info("try to delete the user with id " + id);
 
-            spotDao.checkForUserLinks(id);
-            orderDao.checkForUserLinks(id);
+        User user = userDao.getById(id);
 
-            userDao.delete(user);
-        } catch (DaoException e) {
-            log.warn("service. can't delete the user with id " + id, e);
-            throw new ServiceException(e);
-        }
+        spotDao.checkForUserLinks(id);
+        orderDao.checkForUserLinks(id);
+
+        userDao.delete(user);
     }
 
     @Override
     public UserDto getSelfInfo() {
-        try {
-            log.info("service. try to take self info about user");
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-            User user = userDao.getByUsername(username);
+        log.info("try to take self info about user");
 
-            return userMapper.UserToUserDto(user);
-        } catch (DaoException e) {
-            log.warn("service. can't take self info about user", e);
-            throw new ServiceException(e);
-        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userDao.getByUsername(username);
+
+        return userMapper.UserToUserDto(user);
     }
 
     @Override
     public RegistrationResponseDto register(RegistrationRequestDto requestDto) {
-        try {
-            log.info(String.format("service. try to register user with username(%s) password (%s)", requestDto.getUsername(), requestDto.getPassword()));
-            if (userDao.getByUsername(requestDto.getUsername()) != null)
-                throw new ServiceException("already has this username");
-            if (requestDto.getPassword().length() < 4)
-                throw new ServiceException("length of pass less 4");
-            add(requestDto);
-            RegistrationResponseDto registrationResponseDto = userMapper.RequestToResponse(requestDto);
-            return registrationResponseDto;
-        } catch (DaoException e) {
-            log.warn(String.format("service. try can't register user with username(%s) password (%s)", requestDto.getUsername(), requestDto.getPassword()), e);
-            throw new ServiceException(e);
-        }
+        log.info("try to register user with username  "+requestDto.getUsername());
+
+        if (userDao.getByUsername(requestDto.getUsername()) != null)
+            throw new ServiceException("already has this username");
+        if (requestDto.getPassword().length() < 4)
+            throw new ServiceException("length of pass less 4");
+        add(requestDto);
+
+        return userMapper.RequestToResponse(requestDto);
     }
 
     @Override
     public UserAuthenticationResponseDto authenticate(UserAuthenticationRequestDto requestDto) {
-        try {
-            log.info(String.format("service. try to authenticate user with username(%s) password (%s)", requestDto.getUsername(), requestDto.getPassword()));
-            User user = userDao.getByUsername(requestDto.getUsername());
+        log.info("try to authenticate user with username "+requestDto.getUsername());
 
-            if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword()))
-                throw new ServiceException("Password are not equals");
-            UserAuthenticationResponseDto responseDto = new UserAuthenticationResponseDto();
-            responseDto.setUsername(user.getUsername());
-            responseDto.setToken(tokenProvider.generateToken(user));
+        User user = userDao.getByUsername(requestDto.getUsername());
 
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword()))
+            throw new ServiceException("Bad login or password");
+        UserAuthenticationResponseDto responseDto = new UserAuthenticationResponseDto();
+        responseDto.setUsername(user.getUsername());
+        responseDto.setToken(tokenProvider.generateToken(user));
 
-            return responseDto;
-        } catch (DaoException e) {
-            log.warn(String.format("service. can't authenticate user with username(%s) password (%s)", requestDto.getUsername(), requestDto.getPassword()), e);
-            throw new ServiceException(e);
-        }
+        return responseDto;
     }
 
     @Override
     public UserAdminInfoDto getAdminInfoByUserId(Long id) {
-        try {
-            log.info("service. try to get admin info by user with id" + id);
-            User user = userDao.getById(id);
-            UserAdminInfoDto userAdminInfoDto = userMapper.UserToUserAdminInfoDto(user);
-            return userAdminInfoDto;
-        } catch (DaoException e) {
-            log.warn("service. can't get admin info by user with id" + id, e);
-            throw new ServiceException(e);
-        }
+        log.info("try to get admin info by user with id" + id);
+
+        User user = userDao.getById(id);
+
+        return userMapper.UserToUserAdminInfoDto(user);
     }
 
     @Override
     public UserOrdersInfoDto getUserOrdersInfo(Long id) {
-        try {
-            log.info("service. try to take info about user and orders with userId " + id);
-            User user = userDao.getById(id);
-            List<Order> orders = orderDao.getOrdersByUserId(id);
-            UserOrdersInfoDto userOrdersInfoDto = userMapper.UserToUserOrdersInfoDto(user.getUsername(), orders);
-            return userOrdersInfoDto;
-        } catch (DaoException e) {
-            log.warn("service. can't take info about user and orders with userId " + id, e);
-            throw new ServiceException(e);
-        }
+        log.info("try to take info about user and orders with userId " + id);
+
+        User user = userDao.getById(id);
+        List<Order> orders = orderDao.getOrdersByUserId(id);
+
+        return  userMapper.UserToUserOrdersInfoDto(user.getUsername(), orders);
     }
 
     @Override
     public UserOrdersInfoDto getUserOrdersInfo() {
-        try {
-            log.info("service. try to take self info about user and orders with userId ");
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-            User user = userDao.getByUsername(username);
-            List<Order> orders = orderDao.getOrdersByUserId(user.getId());
-            UserOrdersInfoDto userOrdersInfoDto = userMapper.UserToUserOrdersInfoDto(user.getUsername(), orders);
-            return userOrdersInfoDto;
+        log.info("try to take self info about user and orders with userId ");
 
-        } catch (DaoException e) {
-            log.warn("service. can't take self info about user and orders with userId ", e);
-            throw new ServiceException(e);
-        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userDao.getByUsername(username);
+        List<Order> orders = orderDao.getOrdersByUserId(user.getId());
+
+        return userMapper.UserToUserOrdersInfoDto(user.getUsername(), orders);
     }
 
     @Override
     public User getByUsername(String username) {
-        try {
-            log.info("service. try to take user by username - " + username);
-            return userDao.getByUsername(username);
-        } catch (DaoException e) {
-            log.warn("service. can't take user by username - " + username, e);
-            throw new ServiceException(e);
-        }
+        log.info("try to take user by username - " + username);
+
+        return userDao.getByUsername(username);
     }
 
     @Override
     public void deactivate() {
-        try {
-            log.info("service. try to deactivate");
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-            User user = userDao.getByUsername(username);
-            user.setStatus(UserStatus.NON_ACTIVE);
-            update(user);
-        } catch (DaoException e) {
-            log.warn("service. cant deactivate", e);
-            throw new ServiceException(e);
-        }
+        log.info("try to deactivate");
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userDao.getByUsername(username);
+        user.setStatus(UserStatus.NON_ACTIVE);
+
+        update(user);
     }
 
     @Override
     public void setSubscription(Long userId, Integer subscription) {
-        try {
-            log.info(String.format("service. try to set subscription %d to user with id %d", subscription, userId));
-            if (subscription < 0 || subscription > 10) {
-                log.warn("service. Bad number of subscription " + subscription);
-                throw new ServiceException("Bad number of subscription");
-            }
-            User user = userDao.getById(userId);
-            user.setSubscription(subscription);
-            update(user);
-        } catch (DaoException e) {
-            log.warn(String.format("service. cant set subscription %d to user with id %d", subscription, userId), e);
-            throw new ServiceException(e);
-        }
+        log.info(String.format("try to set subscription %d to user with id %d", subscription, userId));
 
+        if (subscription < 0 || subscription > 10) {
+            log.warn("service. Bad number of subscription " + subscription);
+            throw new ServiceException("Bad number of subscription");
+        }
+        User user = userDao.getById(userId);
+        user.setSubscription(subscription);
+
+        update(user);
     }
 
     @Override
     public void setDiscount(Long userId, Integer discount) {
-        try {
-            log.info(String.format("service. try to set discount %d to user with id %d", discount, userId));
-            if (discount < 0 || discount > 90) {
-                log.warn("service. Bad number of discount" + discount);
-                throw new ServiceException("Bad number of discount");
-            }
-            User user = userDao.getById(userId);
-            user.setDiscount(discount);
-            update(user);
-        } catch (DaoException e) {
-            log.warn(String.format("service. cant set discount %d to user with id %d", discount, userId), e);
-            throw new ServiceException(e);
+        log.info(String.format("try to set discount %d to user with id %d", discount, userId));
+
+        if (discount < 0 || discount > 90) {
+            log.warn("service. Bad number of discount" + discount);
+            throw new ServiceException("Bad number of discount");
         }
+        User user = userDao.getById(userId);
+        user.setDiscount(discount);
+
+        update(user);
     }
 
     @Override
     public void setAdminRole(Long userId) {
-        try {
-            log.info("service. try to set ADMIN role to user with id" + userId);
-            User user = userDao.getById(userId);
-            user.setRole(Role.ADMIN);
-            update(user);
-        } catch (DaoException e) {
-            log.warn("service. try to set ADMIN role to user with id" + userId, e);
-            throw new ServiceException(e);
-        }
+        log.info("try to set ADMIN role to user with id" + userId);
+
+        User user = userDao.getById(userId);
+        user.setRole(Role.ADMIN);
+
+        update(user);
     }
 
 }

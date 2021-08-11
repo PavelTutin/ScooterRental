@@ -38,86 +38,65 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void add(OrderDto orderDto) {
-        try {
-            log.info("Service. try to add order from orderDto");
+        log.info("Service. try to add order from orderDto");
 
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
-            User user  = userDao.getByUsername(username);
+        User user = userDao.getByUsername(username);
 
-            if (user.getStatus().equals(UserStatus.NON_ACTIVE))
-                throw new ServiceException("User is deactivated");
+        if (user.getStatus().equals(UserStatus.NON_ACTIVE))
+            throw new ServiceException("User is deactivated");
 
-            Order order = orderMapper.OrderDtoToOrder(orderDto);
-            Scooter scooter = order.getScooter();
+        Order order = orderMapper.OrderDtoToOrder(orderDto);
+        Scooter scooter = order.getScooter();
 
-            order.setUser(userDao.getByUsername(username));
+        order.setUser(userDao.getByUsername(username));
 
-            double minutes = ChronoUnit.MINUTES.between(order.getTimeStart(),order.getTimeEnd());
-            int battery = (int)minutes/15;
-            scooter.setBattery(scooter.getBattery() - battery);
-            scooterDao.update(scooter);
+        double minutes = ChronoUnit.MINUTES.between(order.getTimeStart(), order.getTimeEnd());
+        int battery = (int) minutes / 15;
+        scooter.setBattery(scooter.getBattery() - battery);
+        scooterDao.update(scooter);
 
-            if (order.getTariff().equals(Tariff.SUBSCRIPTION)){
-                if (user.getSubscription()>0){
-                    user.setSubscription(user.getSubscription()-1);
-                    userDao.update(user);
-                }else {
-                    order.setTariff(Tariff.ONCE);
-                }
-
+        if (order.getTariff().equals(Tariff.SUBSCRIPTION)) {
+            if (user.getSubscription() > 0) {
+                user.setSubscription(user.getSubscription() - 1);
+                userDao.update(user);
+            } else {
+                order.setTariff(Tariff.ONCE);
             }
 
-            orderDao.save(order);
-        } catch (DaoException e) {
-            log.warn("Service. can't add order from orderDto",e);
-            throw new ServiceException(e);
         }
+
+        orderDao.save(order);
     }
 
     @Override
     public OrderScooterInfoDto getById(Long id) {
-        try {
-            log.info("service. try to getById order with id "+id);
-            return orderMapper.OrderToOrderScooterInfoDto(orderDao.getById(id));
-        } catch (DaoException e) {
-            log.warn("service. can't getById order with id "+id,e);
-            throw new ServiceException(e);
-        }
+        log.info("service. try to getById order with id " + id);
+
+        return orderMapper.OrderToOrderScooterInfoDto(orderDao.getById(id));
     }
 
     @Override
     public List<OrderScooterInfoDto> getAll() {
-        try {
-            log.info("service. try to getAll orders");
-            return orderMapper.OrderToOrderScooterInfoDto(orderDao.getAll());
-        } catch (DaoException e) {
-            log.warn("service. can't getAll orders",e);
-            throw new ServiceException(e);
-        }
+        log.info("service. try to getAll orders");
+
+        return orderMapper.OrderToOrderScooterInfoDto(orderDao.getAll());
     }
 
     @Override
     public OrderScooterInfoDto update(Order order) {
-        try {
-            log.info("service. try to update the order with id "+order.getId());
-            return orderMapper.OrderToOrderScooterInfoDto(orderDao.update(order));
-        } catch (DaoException e) {
-            log.warn("service. can't update the order with id "+order.getId(),e);
-            throw new ServiceException(e);
-        }
+        log.info("service. try to update the order with id " + order.getId());
+
+        return orderMapper.OrderToOrderScooterInfoDto(orderDao.update(order));
     }
 
     @Override
     public void delete(Long id) {
-        try {
-            log.info("service. try to delete the order with id "+id);
-            Order order = orderDao.getById(id);
-            orderDao.delete(order);
-        } catch (DaoException e) {
-            log.warn("service. can't delete the order with id "+id,e);
-            throw new ServiceException(e);
-        }
+        log.info("service. try to delete the order with id " + id);
+
+        Order order = orderDao.getById(id);
+        orderDao.delete(order);
     }
 }

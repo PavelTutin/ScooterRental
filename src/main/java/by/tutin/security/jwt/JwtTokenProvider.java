@@ -28,21 +28,21 @@ public class JwtTokenProvider {
     @Value("${jwt.token.token-validity}")
     private String jwtValidity;
 
-    public String generateToken(User user){
+    public String generateToken(User user) {
 
         Date dateNow = new Date();
         Date validity = new Date(dateNow.getTime() + Long.parseLong(jwtValidity));
 
         return Jwts.builder()
                 .setSubject(user.getUsername())
-                .claim(AUTHORITIES_KEY,user.getRole())
-                .signWith(SignatureAlgorithm.HS256,jwtSecret)
+                .claim(AUTHORITIES_KEY, user.getRole())
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .setIssuedAt(dateNow)
                 .setExpiration(validity)
                 .compact();
     }
 
-    public boolean validate(String token){
+    public boolean validate(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
 
@@ -50,16 +50,16 @@ public class JwtTokenProvider {
                 return false;
             }
             return true;
-        }catch (JwtException | IllegalArgumentException e) {
+        } catch (JwtException | IllegalArgumentException e) {
             log.warning("JWT token is expired or invalid");
-        }catch (Exception e){
+        } catch (Exception e) {
             log.warning(e.getLocalizedMessage());
         }
         return false;
     }
 
-    public Authentication getAuthentication(String token){
-        Claims claims =Jwts.parser()
+    public Authentication getAuthentication(String token) {
+        Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody();
@@ -69,8 +69,8 @@ public class JwtTokenProvider {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        org.springframework.security.core.userdetails.User principal = new org.springframework.security.core.userdetails.User(claims.getSubject(),"",authorities);
+        org.springframework.security.core.userdetails.User principal = new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities);
 
-        return new UsernamePasswordAuthenticationToken(principal,token,authorities);
+        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 }

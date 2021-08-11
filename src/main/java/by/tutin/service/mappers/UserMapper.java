@@ -22,6 +22,7 @@ public interface UserMapper {
     RegistrationResponseDto UserToRegistrationResponseDto(User user);
 
     UserDto UserToUserDto(User user);
+
     List<UserDto> UserToUserDto(List<User> user);
 
     RegistrationResponseDto RequestToResponse(RegistrationRequestDto requestDto);
@@ -30,8 +31,8 @@ public interface UserMapper {
 
     UserOrdersInfoDto UserToUserOrdersInfoDto(String username, List<Order> orders);
 
-    @Mappings({@Mapping(target = "startSpotAddress",expression ="java(order.getStartSpot().getAddress())"),
-            @Mapping(target = "endSpotAddress",expression ="java(order.getEndSpot().getAddress())"),
-            @Mapping(target = "scooterModel",expression ="java(order.getScooter().getModel())")})
+    @Mappings({@Mapping(target = "startSpotAddress", expression = "java(order.getStartSpot().getAddress())"),
+            @Mapping(target = "endSpotAddress", expression = "java(order.getEndSpot().getAddress())"),
+            @Mapping(target = "scooterModel", expression = "java(order.getScooter().getModel())")})
     UserOrderDto orderToUserOrderDto(Order order);
 }

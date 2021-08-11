@@ -11,6 +11,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+
 @Log4j
 @Repository
 @Transactional
@@ -23,17 +24,17 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
     @Override
     public User getByUsername(String username) {
         try {
-            log.info("try to take user by username :"+username);
+            log.info("try to take user by username :" + username);
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<User> cr = cb.createQuery(User.class);
             Root<User> root = cr.from(User.class);
             cr.select(root).where(cb.equal(root.get("username"), username));
 
             Query query = entityManager.createQuery(cr);
-            return query.getResultList().size()==0? null : (User) query.getResultList().get(0);
-        }catch (Exception e){
-            log.warn("can't take user by username :"+username,e);
-            throw new DaoException("can't take user by username :"+username,e);
+            return query.getResultList().size() == 0 ? null : (User) query.getResultList().get(0);
+        } catch (Exception e) {
+            log.warn("can't take user by username :" + username, e);
+            throw new DaoException("can't take user by username :" + username, e);
         }
     }
 

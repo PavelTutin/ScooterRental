@@ -3,11 +3,14 @@ package by.tutin.model;
 import by.tutin.model.enums.Role;
 import by.tutin.model.enums.UserStatus;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "user")
 public class User extends AEntity {

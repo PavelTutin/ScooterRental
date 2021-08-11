@@ -18,13 +18,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/{id}") // TODO надо ли он вообще
-    public ResponseEntity<UserDto> getById(@PathVariable Long id) {
-        log.info("/users/"+id);
-        UserDto userDto = userService.getById(id);
-        return ResponseEntity.ok(userDto);
-    }
-
     @GetMapping("")
     public ResponseEntity<List<UserDto>> getAll() {
         log.info("/users@getAll");
@@ -34,7 +27,7 @@ public class UserController {
 
     @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        log.info("/users/admin/@delete"+id);
+        log.info("/users/admin/@delete" + id);
         userService.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -53,24 +46,25 @@ public class UserController {
         return ResponseEntity.ok(userOrdersInfoDto);
     }
 
-    @PatchMapping("/admin/setSubscription")
-    public ResponseEntity<Void> setSubscription(@RequestParam(name = "userId") Long userId
+    @PatchMapping("/admin/setSubscription/{userId}")
+    public ResponseEntity<Void> setSubscription(@PathVariable Long userId
             , @RequestParam(name = "subscription") Integer subscription) {
-        log.info(String.format("/users/admin/setSubscription?userId= %d &subscription= %d",userId,subscription));
+        log.info(String.format("/users/admin/setSubscription?userId= %d &subscription= %d", userId, subscription));
         userService.setSubscription(userId, subscription);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/admin/setDiscount")
-    public ResponseEntity<Void> setDiscount(@RequestParam(name = "userId") Long userId
+    @PatchMapping("/admin/setDiscount/{userId}")
+    public ResponseEntity<Void> setDiscount(@PathVariable Long userId
             , @RequestParam(name = "discount") Integer discount) {
-        log.info(String.format("/users/admin/setDiscount?userId= %d &discount= %d",userId,discount));
+        log.info(String.format("/users/admin/setDiscount?userId= %d &discount= %d", userId, discount));
         userService.setDiscount(userId, discount);
         return ResponseEntity.noContent().build();
     }
-    @PatchMapping("/admin/setAdmin")
-    public ResponseEntity<Void> setDiscount(@RequestParam(name = "userId") Long userId) {
-        log.info("/users/admin/setAdmin?userId="+userId);
+
+    @PatchMapping("/admin/setAdmin/{userId}")
+    public ResponseEntity<Void> setDiscount(@PathVariable Long userId) {
+        log.info("/users/admin/setAdmin?userId=" + userId);
         userService.setAdminRole(userId);
         return ResponseEntity.noContent().build();
     }

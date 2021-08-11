@@ -37,13 +37,14 @@ public class JpaConfiguration {
     private String hibernateTempUseJdbcMetadataDefaults;
 
     @Bean
-    public DataSource dataSource(){
-        DriverManagerDataSource driverManager = new DriverManagerDataSource(databaseUrl,username,password);
+    public DataSource dataSource() {
+        DriverManagerDataSource driverManager = new DriverManagerDataSource(databaseUrl, username, password);
         driverManager.setDriverClassName(driverClassName);
         return driverManager;
     }
+
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManager(DataSource dataSource){
+    public LocalContainerEntityManagerFactoryBean entityManager(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
         entityManager.setDataSource(dataSource);
         entityManager.setPackagesToScan("by.tutin.model");
@@ -55,7 +56,7 @@ public class JpaConfiguration {
     }
 
     @Bean
-    public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory){
+    public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
         jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);
 
@@ -63,14 +64,14 @@ public class JpaConfiguration {
 
     }
 
-    private Properties gerProperties(){
+    private Properties gerProperties() {
         Properties properties = new Properties();
 
-        properties.setProperty("hibernate.dialect",dialect);
-        properties.setProperty("hibernate.show_sql",showSql);
-        properties.setProperty("hibernate.hbm2ddl.auto",hibernateHbm2ddlAuto);
-        properties.setProperty("hibernate.lazy_load_no_trans",hibernateLazyLoadNoTrans);
-        properties.setProperty("hibernate.use_jbl_metadata_defaults",hibernateTempUseJdbcMetadataDefaults);
+        properties.setProperty("hibernate.dialect", dialect);
+        properties.setProperty("hibernate.show_sql", showSql);
+        properties.setProperty("hibernate.hbm2ddl.auto", hibernateHbm2ddlAuto);
+        properties.setProperty("hibernate.lazy_load_no_trans", hibernateLazyLoadNoTrans);
+        properties.setProperty("hibernate.use_jbl_metadata_defaults", hibernateTempUseJdbcMetadataDefaults);
 
         return properties;
     }

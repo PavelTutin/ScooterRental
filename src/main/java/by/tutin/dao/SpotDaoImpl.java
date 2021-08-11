@@ -26,7 +26,7 @@ public class SpotDaoImpl extends AbstractDao<Spot> implements SpotDao {
     @Override
     public int getScootersNumber(Long spotId) {
         try {
-            log.info("try to take number of scooters from spot with id:"+spotId);
+            log.info("try to take number of scooters from spot with id:" + spotId);
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<Scooter> cr = cb.createQuery(Scooter.class);
             Root<Scooter> root = cr.from(Scooter.class);
@@ -34,16 +34,16 @@ public class SpotDaoImpl extends AbstractDao<Spot> implements SpotDao {
 
             Query query = entityManager.createQuery(cr);
             return query.getResultList().size();
-        }catch (Exception e){
-            log.warn("can't take number of scooters from spot with id:"+spotId,e);
-            throw new DaoException("can't take number of scooters from spot with id:"+spotId,e);
+        } catch (Exception e) {
+            log.warn("can't take number of scooters from spot with id:" + spotId, e);
+            throw new DaoException("can't take number of scooters from spot with id:" + spotId, e);
         }
     }
 
     @Override
     public void checkForUserLinks(Long id) {
         try {
-            log.info("try to delete user links in spot with user id:"+id);
+            log.info("try to delete user links in spot with user id:" + id);
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<Spot> cr = cb.createQuery(Spot.class);
             Root<Spot> root = cr.from(Spot.class);
@@ -52,14 +52,14 @@ public class SpotDaoImpl extends AbstractDao<Spot> implements SpotDao {
             Query query = entityManager.createQuery(cr);
             List<Spot> spots = query.getResultList();
 
-            for (Spot spot: spots){
+            for (Spot spot : spots) {
                 spot.setMaintainer(null);
                 update(spot);
             }
 
-        }catch (Exception e){
-            log.warn("can't delete user links in spot with user id:"+id);
-            throw new DaoException("can't delete user links in spot with user id:"+id,e);
+        } catch (Exception e) {
+            log.warn("can't delete user links in spot with user id:" + id);
+            throw new DaoException("can't delete user links in spot with user id:" + id, e);
         }
     }
 }

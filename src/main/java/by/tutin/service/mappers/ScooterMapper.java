@@ -17,14 +17,14 @@ public interface ScooterMapper {
     @Mapping(target = "spot", ignore = true)
     Scooter ScooterDtoToScooter(ScooterDto scooterDto);
 
-    @Mapping(target = "spot", expression ="java(scooter.getSpot().getAddress())")
+    @Mapping(target = "spot", expression = "java(scooter.getSpot().getAddress())")
     ScooterDto ScooterToScooterDto(Scooter scooter);
 
     List<ScooterDto> ScooterToScooterDto(List<Scooter> scooter);
 
     ScooterOrderDto ScooterToScooterOrderDto(Scooter scooter, List<Order> orders);
 
-    @Mappings({@Mapping(target = "startSpotAddress",expression ="java(order.getStartSpot().getAddress())"),
-            @Mapping(target = "endSpotAddress",expression ="java(order.getEndSpot().getAddress())")    })
+    @Mappings({@Mapping(target = "startSpotAddress", expression = "java(order.getStartSpot().getAddress())"),
+            @Mapping(target = "endSpotAddress", expression = "java(order.getEndSpot().getAddress())")})
     OrderInfoDto orderToOrderInfoDto(Order order);
 }

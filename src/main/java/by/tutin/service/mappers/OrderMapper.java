@@ -26,9 +26,9 @@ public abstract class OrderMapper {
             @Mapping(target = "endSpot", expression = "java(spotDao.getById(orderDto.getEndSpotId()))")})
     public abstract Order OrderDtoToOrder(OrderDto orderDto);
 
-    @Mappings({@Mapping(target = "scooterModel",expression = "java(order.getScooter().getModel())"),
-    @Mapping(target = "startSpotAddress",expression = "java(order.getStartSpot().getAddress())"),
-    @Mapping(target = "endSpotAddress",expression = "java(order.getEndSpot().getAddress())")})
+    @Mappings({@Mapping(target = "scooterModel", expression = "java(order.getScooter().getModel())"),
+            @Mapping(target = "startSpotAddress", expression = "java(order.getStartSpot().getAddress())"),
+            @Mapping(target = "endSpotAddress", expression = "java(order.getEndSpot().getAddress())")})
     public abstract OrderScooterInfoDto OrderToOrderScooterInfoDto(Order order);
 
     public abstract List<OrderScooterInfoDto> OrderToOrderScooterInfoDto(List<Order> order);

@@ -33,7 +33,7 @@ public class SpotController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<List<SpotFullDto>> getAll(){
         log.info("/spots@getAll");
         List<SpotFullDto> fullDtoList = spotService.getAll();
@@ -47,23 +47,23 @@ public class SpotController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/admin/setParent")
-    public ResponseEntity<Void> changeParent(@RequestParam(name = "spotId") Long spotId
+    @PatchMapping("/admin/setParent/{spotId}")
+    public ResponseEntity<Void> changeParent(@PathVariable Long spotId
             ,@RequestParam(name = "parentId") Long parentId){
         log.info(String.format("/spots/admin/setParent?spotId= %d &parentId= %d",spotId,parentId));
         spotService.changeParent(spotId,parentId);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/info")
-    public ResponseEntity<SpotScooterInformationDto> spotScooterInformation(@RequestParam(name = "spotId") Long spotId){
+    @GetMapping("/info/{spotId}")
+    public ResponseEntity<SpotScooterInformationDto> spotScooterInformation(@PathVariable Long spotId){
         log.info("/spots/info?spotId="+spotId);
         SpotScooterInformationDto spotScooterInformationDto = spotService.spotScooterInformation(spotId);
         return ResponseEntity.ok(spotScooterInformationDto);
     }
 
-    @PatchMapping("/admin/setAdmin")
-    public ResponseEntity<Void> setAdmin(@RequestParam(name = "spotId") Long spotId
+    @PatchMapping("/admin/setAdmin/{spotId}")
+    public ResponseEntity<Void> setAdmin(@PathVariable() Long spotId
             ,@RequestParam(name = "userId") Long userId){
         log.info(String.format("/spots/admin/setAdmin?spotId= %d & userId= %d",spotId,userId));
         spotService.setAdmin(spotId,userId);

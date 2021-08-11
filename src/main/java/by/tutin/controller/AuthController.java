@@ -22,14 +22,14 @@ public class AuthController {
 
     @PostMapping("/registration")
     public ResponseEntity<Void> register(@RequestBody RegistrationRequestDto requestDto) {
-        log.info(String.format("/auth/registration username(%s) password(%s)",requestDto.getUsername(),requestDto.getPassword()));
+        log.info("/auth/registration username " + requestDto.getUsername());
         userService.register(requestDto);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<UserAuthenticationResponseDto> authenticate(@RequestBody UserAuthenticationRequestDto requestDto) {
-        log.info(String.format("/auth/authenticate username(%s) password(%s)",requestDto.getUsername(),requestDto.getPassword()));
+        log.info(String.format("/auth/authenticate username(%s) password(%s)", requestDto.getUsername(), requestDto.getPassword()));
         UserAuthenticationResponseDto responseDto = userService.authenticate(requestDto);
         return ResponseEntity.ok(responseDto);
     }

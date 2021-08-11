@@ -9,5 +9,5 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 @ComponentScan("by.tutin.controller")
-public class ServletConfiguration implements WebMvcConfigurer{
+public class ServletConfiguration implements WebMvcConfigurer {
 }

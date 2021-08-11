@@ -8,10 +8,7 @@ import by.tutin.model.dto.UserOrdersInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Log4j
 @RequiredArgsConstructor
@@ -22,22 +19,23 @@ public class AdminController {
     private final ScooterService scooterService;
     private final UserService userService;
 
-    @GetMapping("/scooterinfo")
-    public ResponseEntity<ScooterOrderDto> fullScooterInfo(@RequestParam(name = "scooterId") Long scooterId){
-        log.info("/admin/scooterinfo?scooterId"+scooterId);
+    @GetMapping("/scooterinfo/{scooterId}")
+    public ResponseEntity<ScooterOrderDto> fullScooterInfo(@PathVariable Long scooterId) {
+        log.info("/admin/scooterinfo/" + scooterId);
         ScooterOrderDto scooterOrderDto = scooterService.fullScooterInfo(scooterId);
         return ResponseEntity.ok(scooterOrderDto);
     }
-    @GetMapping("/user")
-    public ResponseEntity<UserAdminInfoDto> getAdminInfoByUserId(@RequestParam(name = "id") Long id) {
-        log.info("/admin/user?id="+id);
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<UserAdminInfoDto> getAdminInfoByUserId(@PathVariable Long id) {
+        log.info("/admin/user?id=" + id);
         UserAdminInfoDto userAdminInfoDto = userService.getAdminInfoByUserId(id);
         return ResponseEntity.ok(userAdminInfoDto);
     }
 
-    @GetMapping("/userOrders")
-    public ResponseEntity<UserOrdersInfoDto> getAdminUserOrdersInfo(@RequestParam(name = "id") Long id) {
-        log.info("/admin/userOrders?id="+id);
+    @GetMapping("/userOrders/{id}")
+    public ResponseEntity<UserOrdersInfoDto> getAdminUserOrdersInfo(@PathVariable Long id) {
+        log.info("/admin/userOrders?id=" + id);
         UserOrdersInfoDto userOrdersInfoDto = userService.getUserOrdersInfo(id);
         return ResponseEntity.ok(userOrdersInfoDto);
     }

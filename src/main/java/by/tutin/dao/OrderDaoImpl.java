@@ -26,7 +26,7 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
     @Override
     public List<Order> getOrdersByScooterId(Long scooterId) {
         try {
-            log.info("try to take orders by scooter with id:"+scooterId);
+            log.info("try to take orders by scooter with id:" + scooterId);
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<Order> cr = cb.createQuery(Order.class);
             Root<Order> root = cr.from(Order.class);
@@ -34,23 +34,23 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
 
             Query query = entityManager.createQuery(cr);
             return query.getResultList();
-        }catch (Exception e){
-            log.warn("can't take orders by scooter with id:"+scooterId,e);
-            throw new DaoException("can't take orders by scooter with id:"+scooterId,e);
+        } catch (Exception e) {
+            log.warn("can't take orders by scooter with id:" + scooterId, e);
+            throw new DaoException("can't take orders by scooter with id:" + scooterId, e);
         }
     }
 
     @Override
     public void checkForSpot(Long id) {
         try {
-            log.info("try to check spot for links with spotId "+id);
+            log.info("try to check spot for links with spotId " + id);
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<Order> cr = cb.createQuery(Order.class);
             Root<Order> root = cr.from(Order.class);
 
             Predicate predicateForStartSpot = cb.equal(root.get("startSpot"), id);
             Predicate predicateForEndSpot = cb.equal(root.get("endSpot"), id);
-            Predicate predicateForSpot = cb.or(predicateForStartSpot,predicateForEndSpot);
+            Predicate predicateForSpot = cb.or(predicateForStartSpot, predicateForEndSpot);
 
             cr.select(root).where(predicateForSpot);
 
@@ -63,16 +63,16 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
                 order.setEndSpot(null);
                 update(order);
             }
-        }catch (Exception e){
-            log.warn("can't delete links. spotId "+id,e);
-            throw new DaoException("can't delete links",e);
+        } catch (Exception e) {
+            log.warn("can't delete links. spotId " + id, e);
+            throw new DaoException("can't delete links", e);
         }
     }
 
     @Override
     public void checkForUserLinks(Long id) {
         try {
-            log.info("try to delete user links with user id:"+id);
+            log.info("try to delete user links with user id:" + id);
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<Order> cr = cb.createQuery(Order.class);
             Root<Order> root = cr.from(Order.class);
@@ -81,21 +81,21 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
             Query query = entityManager.createQuery(cr);
             List<Order> orders = query.getResultList();
 
-            for (Order order : orders){
+            for (Order order : orders) {
                 order.setUser(null);
                 update(order);
             }
 
-        }catch (Exception e){
-            log.warn("can't delete user links with user id:"+id,e);
-            throw new DaoException("can't delete user links with user id:"+id,e);
+        } catch (Exception e) {
+            log.warn("can't delete user links with user id:" + id, e);
+            throw new DaoException("can't delete user links with user id:" + id, e);
         }
     }
 
     @Override
     public List<Order> getOrdersByUserId(Long userId) {
         try {
-            log.info("try to take orders by user with id:"+userId);
+            log.info("try to take orders by user with id:" + userId);
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<Order> cr = cb.createQuery(Order.class);
             Root<Order> root = cr.from(Order.class);
@@ -103,9 +103,9 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
 
             Query query = entityManager.createQuery(cr);
             return query.getResultList();
-        }catch (Exception e){
-            log.warn("can't take orders by user with id:"+userId,e);
-            throw new DaoException("can't take orders by user with id:"+userId,e);
+        } catch (Exception e) {
+            log.warn("can't take orders by user with id:" + userId, e);
+            throw new DaoException("can't take orders by user with id:" + userId, e);
         }
     }
 }
